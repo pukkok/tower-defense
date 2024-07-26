@@ -1,0 +1,178 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: #000;
+    overflow-y: hidden;
+}
+
+section{
+    display: grid;
+    max-width: 1280px;
+    overflow: hidden;
+    margin: 0px auto;
+    position: relative;
+    grid-template-columns: 1fr 1fr;
+    border: solid 1px #e1e1e1;
+}
+
+button{
+    all: unset;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+#game-canvas{
+    background-color: #141d1f;
+}
+
+#active-canvas{
+    position: absolute;
+    background-image: none;
+    top: 0;
+    left: 0;
+}
+
+.controller{
+    border-left: solid 1px #e1e1e1;
+    
+    background-color: #2e2e2e;
+    padding: 10px;
+    color: white;
+    position: relative;
+    max-height: 100vh;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+/* ***************** 시작 할 때 *************** */
+.controller .starter{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: solid 1px blueviolet;
+    top: 0;
+    left: 0;
+    background-color: #2e2e2e;
+    z-index: 20;
+}
+.controller .starter button{
+    position: relative;
+    font-size: 22px;
+    font-weight: bold;
+    top: 50%;
+    left: 50%;
+    padding: 20px;
+    transform: translate(-50%, -50%);
+    border: solid 1px blueviolet;
+    border-radius: 12px;
+}
+.controller .starter button:hover{
+    background-color: blueviolet;
+    color: white;
+}
+/* ********************************************** */
+.controller h1{
+    display: flex;
+    align-items: center;
+}
+
+.controller h1 .setting-box{
+    margin-left: auto;
+    display: flex;
+    gap: 15px;
+}
+
+.controller h1 button{
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    object-fit: cover;
+    filter: invert(1);
+}
+
+.controller h1 .music.on{
+    background-image: url(./public/musical-note.png);
+}
+.controller h1 .music.off{
+    background-image: url(./public/mute.png);
+}
+.controller h1 .setting{
+    background-image: url(./public/setting.png);
+}
+
+.tab-box{
+    display: flex;
+    gap: 10px;
+    max-height: 50px;
+}
+.tab-box button{
+    display: flex;
+    justify-content: center;
+    border: solid 1px blueviolet;
+    flex: 1;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.cool-time{
+    border: solid 1px red;
+}
+
+.info {
+    overflow: scroll;
+}
+
+.info .card{
+    box-sizing: border-box;
+    border: solid 1px blueviolet;
+    padding: 10px 15px;
+    border-radius: 8px;
+    min-width: 200px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.info .card h3{
+    padding-bottom: 15px;
+}
+
+.info .card p{
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.info .card p:nth-last-child(1){
+    padding-bottom: 0;
+}
+
+.info .card p span{
+    padding-left: 10px;
+    color: gold;
+    font-weight: bold;
+}
+
+.info .card p button{
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
+}
+
+.info .card p button img{
+    filter: invert(1);
+}
+
+.info .card p button:disabled img{
+    filter: invert(.6);
+}
+
+img{
+    width: 100%;
+    height: 100%;
+}

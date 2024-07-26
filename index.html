@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tower-defense</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+    <section>
+        <canvas id="game-canvas"></canvas>
+        <canvas id="active-canvas"></canvas>
+        <div class="controller">
+            <div class="starter">
+                <button>시작</button>
+            </div>
+
+            <h1>게임 정보
+                <div class="setting-box">
+                    <button class="music on"></button>
+                    <button class="setting"></button>
+                </div>
+            </h1>
+
+            <div class="cool-time">
+                <canvas id="cool-time-canvas"></canvas>
+            </div>
+            <div class="tab-box">
+                <button data-tab="tower">타워</button>
+                <button data-tab="weapon">무기</button>
+                <button data-tab="special-weapon">특수</button>
+                <button data-tab="skill">스킬</button>
+            </div>
+            <div class="info"></div>
+            
+            <audio src="./public/bgm/onrepeat.mp3"></audio>
+        </div>
+    </section>
+    <script src="state.js"></script>
+    <script src="Missiles.js"></script>
+    <script src="Active.js"></script>
+    <script src="game.js"></script>
+    <script src="buttonEvent.js"></script>
+</body>
+</html>
