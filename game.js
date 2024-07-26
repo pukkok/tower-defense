@@ -108,6 +108,7 @@ function spawnEnemy() {
 }
 
 function updateEnemies() {
+    
     enemies.forEach((enemy) => {
         // 상태 이상 효과에 따른 적의 색상 변경
         if (enemy.isShock) {
@@ -171,16 +172,23 @@ function updateEnemies() {
             // 적이 타워와 충돌 범위 안에 있을 때
             if (!enemy.inCollision) {
                 // 충돌 상태에 처음 진입하면 데미지 타이머 시작
-                enemy.inCollision = true;
+                enemy.inCollision = true
                 tower.currentHp -= enemy.damage
+                endCase()
                 enemy.damageInterval = setInterval(() => {
                     tower.currentHp -= enemy.damage
-                    if (tower.currentHp <= 0) {
-                        tower.currentHp = 0
-                        clearInterval(enemy.damageInterval)
-                        cancelAnimationFrame(gameLoop)
-                    }
-                }, 1000);
+                    endCase()
+                }, 1000)
+            }
+        }
+
+        function endCase(){ // 체력이 0이되면 패배
+            if (tower.currentHp <= 0) {
+                tower.currentHp = 0
+                clearInterval(enemy.damageInterval)
+                gameOver = true
+                cancelAnimationFrame(gameLoop)
+                audio.pause()
             }
         }
 
@@ -192,10 +200,116 @@ function updateEnemies() {
     })
 }
 
+/*********************************************************************** */
+// 상태 관리
+
+function drawStatus () {
+    statusCtx.clearRect(0, 0, statusCanvas.width, statusCanvas.height)
+
+    // 체력
+    const barHeight = 16
+    statusCtx.fillStyle = 'red'
+    statusCtx.fillRect(20, 10, (statusCanvas.width - 40) * tower.currentHp / tower.hp, barHeight)
+    // 현재체력 / 최대체력
+    statusCtx.font = '13px noto-sans'
+    statusCtx.fillStyle = 'white'
+    const hpMatrics = statusCtx.measureText(`${tower.currentHp} / ${tower.hp}`)
+    const hpX = statusCanvas.width / 2 - hpMatrics.width / 2
+    const hpY = 10 + barHeight / 2 + hpMatrics.actualBoundingBoxAscent / 2
+    statusCtx.fillText(`${tower.currentHp} / ${tower.hp}`, hpX, hpY)
+    // 최대 체력 바
+    statusCtx.strokeStyle = 'red'
+    statusCtx.lineWidth = 1
+    statusCtx.strokeRect(20, 10, statusCanvas.width - 40, barHeight)
+
+    // 마나
+    statusCtx.fillStyle = 'blue'
+    statusCtx.fillRect(20, 30, statusCanvas.width - 40, barHeight)
+    // 현재마나 / 최대마나
+    statusCtx.font = '13px noto-sans'
+    statusCtx.fillStyle = 'white'
+    const mpMatrics = statusCtx.measureText(`${tower.currentMp} / ${tower.mp}`)
+    const mpX = statusCanvas.width / 2 - mpMatrics.width / 2
+    const mpY = 30 + barHeight / 2 +  mpMatrics.actualBoundingBoxAscent / 2
+    statusCtx.fillText(`${tower.currentMp} / ${tower.mp}`, mpX, mpY)
+    // 최대 마나 바
+    statusCtx.strokeStyle = 'blue'
+    statusCtx.strokeRect(20, 30, statusCanvas.width - 40, barHeight)
+
+    if(tower.weapons.length>0){
+        tower.weapons.forEach((weapon, idx) => {
+            let elapsedTime
+            let cooldownPercentage
+
+            if(weapon.color === 'white'){
+                elapsedTime = Date.now() - WM.attackCoolTime // 현재 게이지
+                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / WM.attackDelay)))
+                if(cooldownPercentage === 1) tower.isWPA = true
+            }
+            if(weapon.color === 'blue'){
+                elapsedTime = Date.now() - BM.attackCoolTime
+                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / BM.attackDelay)))
+                if(cooldownPercentage === 1) tower.isBPA = true
+            }
+            if(weapon.color === 'red'){
+                elapsedTime = Date.now() - RM.attackCoolTime
+                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / RM.attackDelay)))
+                if(cooldownPercentage === 1) tower.isRPA = true
+            }
+            if(weapon.color === 'yellowgreen'){
+                elapsedTime = Date.now() - GM.attackCoolTime
+                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / GM.attackDelay)))
+                if(cooldownPercentage === 1) tower.isGPA = true
+            }
+
+            // 쿨타임 체커
+            statusCtx.beginPath()
+            statusCtx.strokeStyle = weapon.color
+            statusCtx.lineWidth = 5
+            statusCtx.arc(20 + idx * 40, 80, 12, -Math.PI / 2, (2 * Math.PI * cooldownPercentage) - Math.PI / 2)
+            statusCtx.stroke()
+            statusCtx.closePath()
+
+            // 내부 공
+            statusCtx.beginPath()
+            statusCtx.arc(20 + idx * 40, 80, 6, -Math.PI / 2, 2 * Math.PI )
+            statusCtx.fillStyle = weapon.color
+            statusCtx.fill()
+        })
+    }
+}
+
+function stateText (state) {
+    let up, down
+    if(state === 'gameover') {
+        up = '게 임'
+        down = '오 버'
+    }
+    if(state === 'pause') {
+        up = '일 시'
+        down = '정 지'
+    }
+    ctx.font = '5rem noto-sans'
+    ctx.fillStyle = 'white'
+    const upMetrics = ctx.measureText(up)
+    const downMetrics = ctx.measureText(down)
+    const upX = canvas.width / 2 - upMetrics.width / 2
+    const downX = canvas.width / 2 - downMetrics.width / 2
+    ctx.fillText(up, upX, canvas.height / 2 - 40)
+    ctx.fillText(down, downX, canvas.height / 2 + 100)
+}
 
 // 실행
 function gameLoop() {
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    if(gameOver === true){
+        return stateText('gameover')
+    }
+    if(pause === true){
+        return stateText('pause')
+    }
+    
     drawTower()
     drawEnemies()
     drawMissile()
@@ -213,6 +327,6 @@ function gameLoop() {
         lastSpawnTime = Date.now()
     }
 
-    drawCoolTime()
+    drawStatus()
     requestAnimationFrame(gameLoop)
 }

@@ -6,11 +6,17 @@ const ctx = canvas.getContext('2d')
 const activeCanvas = document.getElementById('active-canvas')
 const activeCtx = activeCanvas.getContext('2d')
 
-const coolTimeCanvas = document.getElementById('cool-time-canvas')
-const coolCtx = coolTimeCanvas.getContext('2d')
+const statusCanvas = document.getElementById('status-canvas')
+const statusCtx = statusCanvas.getContext('2d')
 
 const audio = document.querySelector('audio')
-const musicBtn = document.querySelector('.controller .music')
+const controller = document.querySelector('.controller')
+const playBtn = controller.querySelector('.play')
+const musicBtn = controller.querySelector('.music')
+const settingBtn = controller.querySelector('.setting')
+
+const starter = controller.querySelector('.starter')
+const startBtn = starter.querySelector('button')
 
 const info = document.querySelector('.info')
 
@@ -28,6 +34,8 @@ if (windowWidth < windowHeight) {
     activeCanvas.width = windowHeight
     activeCanvas.height = windowHeight
 }
+
+section.style.maxWidth = canvas.width + controller.offsetWidth + 'px'
 
 let tower = {
     x: canvas.width / 2,
@@ -122,6 +130,9 @@ let lastSpawnTime = Date.now()
 let activeSkill = {
     thunder : false
 }
+
+let gameOver = false
+let pause = false
 
 let isActive = false
 let activeThunder = null

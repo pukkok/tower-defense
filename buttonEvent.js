@@ -1,7 +1,5 @@
-const controller = document.querySelector('.controller')
-const starter = controller.querySelector('.starter')
 const moreBtnImg = `<img src="./public/more.png" alt="">`
-
+// 게임 시작
 starter.addEventListener('click', () => {
     gameLoop()
     starter.style.display = 'none'
@@ -11,6 +9,7 @@ starter.addEventListener('click', () => {
     audio.play()
 })
 
+// 타워 상태 관리
 function towerStatusChangeHandler () {
     info.innerHTML = ''
     info.append(
@@ -18,7 +17,8 @@ function towerStatusChangeHandler () {
     )
 }
 
-function weaponStatusChangeHandler () { // 무기 상태 관리
+// 무기 상태 관리
+function weaponStatusChangeHandler () { 
     info.innerHTML = ''
     info.append(
         buildMissileCard(WM), buildMissileCard(BM), 
@@ -26,27 +26,44 @@ function weaponStatusChangeHandler () { // 무기 상태 관리
     )
 }
 
+// 탭 버튼
 const tabBtns = document.querySelectorAll('.tab-box button')
-tabBtns.forEach(btn => {
+tabBtns.forEach(btn=> {
     btn.addEventListener('click', (e) => {
         e.preventDefault()
+        tabBtns.forEach(btn => {
+            if(btn.classList.contains('selected')){
+                btn.classList.remove('selected')
+            }
+        })
+        btn.classList.add('selected')
+
         if(btn.dataset.tab === 'weapon') weaponStatusChangeHandler()
         if(btn.dataset.tab === 'tower') towerStatusChangeHandler()
     })
 })
 
-// 타워 정보
+function mappingData (text, value, div) { // 카드 데이터 생성
+    const p = document.createElement('p')
+    const span = document.createElement('span')
+    span.innerText = value
+    const btn = document.createElement('button')
+    btn.innerHTML = moreBtnImg
+    p.append(text, span, btn)
+    div.append(p)
+    return btn
+}
+
+// 타워 정보 카드
 function buildTowerCard () {
     const div = document.createElement('div')
     div.className = 'card'
     const title = document.createElement('h3')
     title.innerText = '타워 정보'
+    div.append(title)
 
     // 장착 슬롯
-    const slot = document.createElement('p')
-    const slotSpan = document.createElement('span')
-    slotSpan.innerText = tower.sides
-    const slotBtn = document.createElement('button')
+    const slotBtn = mappingData('장착 슬롯', tower.sides, div)
     slotBtn.innerHTML = moreBtnImg
     slotBtn.addEventListener('click', () => {
             tower.sides += 1
@@ -56,65 +73,40 @@ function buildTowerCard () {
     if(tower.sides === 8){
         slotBtn.disabled = true
     }
-    slot.append('슬롯 개수', slotSpan, slotBtn)
 
     // 사거리
-    const range = document.createElement('p')
-    const rangeSpan = document.createElement('span')
-    rangeSpan.innerText = tower.range
-    const rangeBtn = document.createElement('button')
-    rangeBtn.innerHTML = moreBtnImg
+    const rangeBtn = mappingData('사거리', tower.range, div)
     rangeBtn.addEventListener('click', () => {
         tower.range += 10
         towerStatusChangeHandler()
     })
-    range.append('사거리', rangeSpan, rangeBtn)
     
-    const hp = document.createElement('p')
-    const hpSpan = document.createElement('span')
-    hpSpan.innerText = tower.hp
-    const hpBtn = document.createElement('button')
-    hpBtn.innerHTML = moreBtnImg
+    // 체력
+    const hpBtn = mappingData('체력', tower.hp, div)
     hpBtn.addEventListener('click', () => {
         tower.hp += 10
         towerStatusChangeHandler()
     })
-    hp.append('체력', hpSpan, hpBtn)
     
-    const hpRegen = document.createElement('p')
-    const hpRegenSpan = document.createElement('span')
-    hpRegenSpan.innerText = tower.hpRegen
-    const hpRegenBtn = document.createElement('button')
-    hpRegenBtn.innerHTML = moreBtnImg
+    // 체력 리젠
+    const hpRegenBtn = mappingData('체력 재생', tower.hpRegen, div)
     hpRegenBtn.addEventListener('click', () => {
-        tower.hpRegen += 10
+        tower.hpRegen += 1
         towerStatusChangeHandler()
     })
-    hpRegen.append('체력 재생', hpRegenSpan, hpRegenBtn)
     
-    const mp = document.createElement('p')
-    const mpSpan = document.createElement('span')
-    mpSpan.innerText = tower.mp
-    const mpBtn = document.createElement('button')
-    mpBtn.innerHTML = moreBtnImg
+    const mpBtn = mappingData('마나', tower.mp, div)
     mpBtn.addEventListener('click', () => {
         tower.mp += 10
         towerStatusChangeHandler()
     })
-    mp.append('마나', mpSpan, mpBtn)
     
-    const mpRegen = document.createElement('p')
-    const mpRegenSpan = document.createElement('span')
-    mpRegenSpan.innerText = tower.mpRegen
-    const mpRegenBtn = document.createElement('button')
-    mpRegenBtn.innerHTML = moreBtnImg
+    const mpRegenBtn = mappingData('마나 리젠', tower.mpRegen, div)
     mpRegenBtn.addEventListener('click', () => {
-        tower.mpRegen += 10
+        tower.mpRegen += 1
         towerStatusChangeHandler()
     })
-    mpRegen.append('마나', mpRegenSpan, mpRegenBtn)
 
-    div.append(title, slot, range, hp, hpRegen, mp, mpRegen)
     return div
 }
 
@@ -170,83 +162,49 @@ function buildMissileCard (missile) {
     div.className = `card ${missile.color}`
     const ballInfo = document.createElement('h3')
     ballInfo.innerText = `${info} 미사일`
-    
-    const damage = document.createElement('p')
-    const damageSpan = document.createElement('span')
-    damageSpan.innerText = missile.damage
-    const damageBtn = document.createElement('button')
-    damageBtn.innerHTML = moreBtnImg
+    div.append(ballInfo)
+
+    // 데미지
+    const damageBtn = mappingData('데미지', missile.damage, div)
     damageBtn.addEventListener('click', () => {
         missile.damage = missile.damage + 1
         weaponStatusChangeHandler()
     })
-    damage.append('데미지', damageSpan, damageBtn)
-
-    const speed = document.createElement('p')
-    const speedSpan = document.createElement('span')
-    speedSpan.innerText = missile.speed
-    const speedBtn = document.createElement('button')
-    speedBtn.innerHTML = moreBtnImg
+    
+    // 투사체 속도
+    const speedBtn = mappingData('투사체 속도', missile.speed, div)
     speedBtn.addEventListener('click', () => {
-        missile.speed = missile.speed + 1
+        missile.speed += 1
         weaponStatusChangeHandler()
     })
     if(missile.speed === 14){
         speedBtn.disabled = true
     }
-    speed.append('투사체 속도', speedSpan, speedBtn)
 
-    const cooltime = document.createElement('p')
-    const cooltimeSpan = document.createElement('span')
-    cooltimeSpan.innerText = missile.attackDelay
-    const cooltimeBtn = document.createElement('button')
-    cooltimeBtn.innerHTML = moreBtnImg
+    // 공격 딜레이
+    const cooltimeBtn = mappingData('공격 쿨타임', missile.attackDelay, div)
     cooltimeBtn.addEventListener('click', () => {
-        missile.attackDelay = missile.attackDelay - 100
+        missile.attackDelay -= 100
         weaponStatusChangeHandler()
     })
     if(missile.attackDelay === 200){
         cooltimeBtn.disabled = true
     }
-    cooltime.append('공격 쿨타임', cooltimeSpan, cooltimeBtn)
 
-    const doubleAttack = document.createElement('p')
-    const doubleAttackSpan = document.createElement('span')
-    doubleAttackSpan.innerText = (missile.doubleAttack).toFixed(2)
-    const doubleAttackBtn = document.createElement('button')
-    doubleAttackBtn.innerHTML = moreBtnImg
+    // 더블 어택
+    const doubleAttackBtn = mappingData('더블어택 확률', (missile.doubleAttack).toFixed(2), div)
     doubleAttackBtn.addEventListener('click', () => {
-        missile.doubleAttack = missile.doubleAttack + 0.01
+        missile.doubleAttack += 0.01
         weaponStatusChangeHandler()
     })
     if(missile.doubleAttack === 1){
         doubleAttackBtn.disabled = true
     }
-    doubleAttack.append('더블 어택 확률', doubleAttackSpan, doubleAttackBtn)
-    div.append(ballInfo, damage, speed, cooltime, doubleAttack)
+
     return div
 }
 
-const btnBox = document.querySelector('.btn-box')
 
-
-// 단축키 이벤트 추가
-window.addEventListener('keydown', (e) => {
-    if(e.code === 'Digit1'){
-        isActive = true
-        mousemoveHandler()
-    }
-})
-
-function mousemoveHandler (){
-    if(isActive){
-        activeCanvas.addEventListener('mousemove', (e) => {
-            let blank = (window.innerWidth - section.offsetWidth ) / 2
-            activeThunder = {x: e.pageX - blank, y: e.pageY, radius: 40}
-            drawActive()
-        })
-    }
-} 
 
 function repositionBalls() { // 볼의 위치 변경
     const angleStep = (2 * Math.PI) / tower.sides
@@ -271,7 +229,7 @@ function equippedItem(color, type) {
         type
     }
     
-    // 같은 공이 있다면 장착 안됨.
+    // 같은 공이 있다면 장착 안됨
     const includeBallCheckers = tower.weapons.filter(weapon => {
         return weapon.color === newBall.color
     })
@@ -280,7 +238,26 @@ function equippedItem(color, type) {
     }
 }
 
-musicBtn.addEventListener('click', () => {
+// 일시정지
+playBtn.addEventListener('click', gamePause)
+
+function gamePause() {
+    if(playBtn.classList.contains('on')){
+        playBtn.classList.remove('on')
+        playBtn.classList.add('off')
+        pause = true
+    }else{
+        playBtn.classList.add('on')
+        playBtn.classList.remove('off')
+        pause = false
+        gameLoop()
+    }
+}
+
+// 음악 켜기/끄기
+musicBtn.addEventListener('click', musicPlay)
+
+function musicPlay() {
     if(musicBtn.classList.contains('on')){
         musicBtn.classList.add('off')
         musicBtn.classList.remove('on')
@@ -290,5 +267,30 @@ musicBtn.addEventListener('click', () => {
         musicBtn.classList.remove('off')
         audio.play()
     }
+}
+
+// 단축키 이벤트 추가
+window.addEventListener('keydown', (e) => {
+    // console.log(e.code)/
+    if(e.code === 'Escape'){
+        gamePause()
+    }
+    if(e.code === 'KeyM'){
+        musicPlay()
+    }
+    if(e.code === 'Digit1'){
+        isActive = true
+        mousemoveHandler()
+    }
 })
 
+// 액티브 사용시
+function mousemoveHandler (){
+    if(isActive){
+        activeCanvas.addEventListener('mousemove', (e) => {
+            let blank = (window.innerWidth - section.offsetWidth ) / 2
+            activeThunder = {x: e.pageX - blank, y: e.pageY, radius: 40}
+            drawActive()
+        })
+    }
+} 

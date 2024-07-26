@@ -18,7 +18,7 @@ function drawThunder () {
     activeCtx.stroke()
     
     const randomValue = () => {
-        let sign = 1
+        let sign = 1 // 부호
         if(Math.random() < .5) sign = -1
 
         return sign * Math.random () * thunderPoint.radius / 2
