@@ -10,7 +10,7 @@ body{
 
 section{
     display: grid;
-    max-width: 1280px;
+    min-width: 1280px;
     overflow: hidden;
     margin: 0px auto;
     position: relative;
