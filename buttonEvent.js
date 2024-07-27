@@ -31,7 +31,7 @@ function togglePause() {
         playBtn.classList.remove('on')
         playBtn.classList.add('off')
     }
-    btnsDisabled()
+    // btnsDisabled()
 }
 
 function btnsDisabled () {
@@ -49,7 +49,7 @@ function towerStatusChangeHandler () {
     info.append(
         buildTowerCard(), buildInventoryCard()
     )
-    btnsDisabled ()
+    // btnsDisabled ()
 }
 
 // 무기 상태 관리
@@ -59,7 +59,7 @@ function weaponStatusChangeHandler () {
         buildMissileCard(WM), buildMissileCard(BM), 
         buildMissileCard(RM), buildMissileCard(GM)
     )
-    btnsDisabled ()
+    // btnsDisabled ()
 }
 
 // 탭 버튼
