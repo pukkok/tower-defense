@@ -85,6 +85,8 @@ function spawnEnemy() {
         }
     }
     
+    const dropItems = []
+
     const newEnemy = {
         x: enemyX,
         y: enemyY,
@@ -172,19 +174,25 @@ function updateEnemies() {
             // 적이 타워와 충돌 범위 안에 있을 때
             if (!enemy.inCollision) {
                 // 충돌 상태에 처음 진입하면 데미지 타이머 시작
-                enemy.inCollision = true
-                tower.currentHp -= enemy.damage
-                endCase()
-                enemy.damageInterval = setInterval(() => {
-                    tower.currentHp -= enemy.damage
-                    endCase()
-                }, 1000)
+                if(!pause){
+                    enemy.inCollision = true
+                    enemyDamage()
+                    enemy.damageInterval = setInterval(() => {
+                        enemyDamage()
+                    }, 1000)
+                }
             }
         }
 
-        function endCase(){ // 체력이 0이되면 패배
-            if (tower.currentHp <= 0) {
+        function enemyDamage(){ // 체력이 0이되면 패배
+
+            if(tower.currentHp - enemy.damage < 0) {
                 tower.currentHp = 0
+            }else{
+                tower.currentHp -= enemy.damage
+            }
+
+            if (tower.currentHp === 0) {
                 clearInterval(enemy.damageInterval)
                 gameOver = true
                 cancelAnimationFrame(gameLoop)
@@ -205,76 +213,92 @@ function updateEnemies() {
 
 function drawStatus () {
     statusCtx.clearRect(0, 0, statusCanvas.width, statusCanvas.height)
-
-    // 체력
+    
+    // 현재체력
     const barHeight = 16
     statusCtx.fillStyle = 'red'
-    statusCtx.fillRect(20, 10, (statusCanvas.width - 40) * tower.currentHp / tower.hp, barHeight)
+    if(tower.currentHp < 0) tower.currentHp = 0
+    statusCtx.fillRect(40, 10, (statusCanvas.width - 60) * tower.currentHp / tower.hp, barHeight)
     // 현재체력 / 최대체력
     statusCtx.font = '13px noto-sans'
     statusCtx.fillStyle = 'white'
     const hpMatrics = statusCtx.measureText(`${tower.currentHp} / ${tower.hp}`)
-    const hpX = statusCanvas.width / 2 - hpMatrics.width / 2
+    const hpX = statusCanvas.width / 2 - hpMatrics.width / 2 + 10
     const hpY = 10 + barHeight / 2 + hpMatrics.actualBoundingBoxAscent / 2
+    statusCtx.fillText('HP', 10, hpY)
     statusCtx.fillText(`${tower.currentHp} / ${tower.hp}`, hpX, hpY)
     // 최대 체력 바
     statusCtx.strokeStyle = 'red'
     statusCtx.lineWidth = 1
-    statusCtx.strokeRect(20, 10, statusCanvas.width - 40, barHeight)
-
+    statusCtx.strokeRect(40, 10, statusCanvas.width - 60, barHeight)
+    
     // 마나
     statusCtx.fillStyle = 'blue'
-    statusCtx.fillRect(20, 30, statusCanvas.width - 40, barHeight)
+    statusCtx.fillRect(40, 30, statusCanvas.width - 60, barHeight)
     // 현재마나 / 최대마나
-    statusCtx.font = '13px noto-sans'
     statusCtx.fillStyle = 'white'
     const mpMatrics = statusCtx.measureText(`${tower.currentMp} / ${tower.mp}`)
-    const mpX = statusCanvas.width / 2 - mpMatrics.width / 2
+    const mpX = statusCanvas.width / 2 - mpMatrics.width / 2 + 10
     const mpY = 30 + barHeight / 2 +  mpMatrics.actualBoundingBoxAscent / 2
+    statusCtx.fillText('MP', 10, mpY)
     statusCtx.fillText(`${tower.currentMp} / ${tower.mp}`, mpX, mpY)
     // 최대 마나 바
     statusCtx.strokeStyle = 'blue'
-    statusCtx.strokeRect(20, 30, statusCanvas.width - 40, barHeight)
+    statusCtx.strokeRect(40, 30, statusCanvas.width - 60, barHeight)
+
+    //적 정보
+
+    //적 체력
+    //스테이지
+    //데미지
+    //속도
+
 
     if(tower.weapons.length>0){
+        let normalCount = 0
         tower.weapons.forEach((weapon, idx) => {
+            
             let elapsedTime
             let cooldownPercentage
+            let missile
+            let possibleAttack
+            switch(weapon.color) {
+                case 'white' : missile = WM
+                possibleAttack = 'isWPA'
+                break
+                case 'blue' : missile = BM
+                possibleAttack = 'isBPA'
+                break
+                case 'red' : missile = RM
+                possibleAttack = 'isRPA'
+                break
+                case 'yellowgreen' : missile = GM
+                possibleAttack = 'isGPA'
+                break
+            }
+            if(weapon.type === 'normal'){
+                elapsedTime = Date.now() - missile.attackCoolTime
+                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / missile.attackDelay)))
+                if(cooldownPercentage === 1) tower[possibleAttack] = true
+                
+                // 쿨타임 체커
+                statusCtx.beginPath()
+                statusCtx.strokeStyle = weapon.color
+                statusCtx.lineWidth = 3
+                statusCtx.arc(20 + normalCount * 30, statusCanvas.height - 20 , 8, -Math.PI / 2, (2 * Math.PI * cooldownPercentage) - Math.PI / 2)
+                statusCtx.stroke()
+                statusCtx.closePath()
+    
+                // 내부 공
+                statusCtx.beginPath()
+                statusCtx.arc(20 + normalCount * 30, statusCanvas.height - 20, 3, -Math.PI / 2, 2 * Math.PI )
+                statusCtx.fillStyle = weapon.color
+                statusCtx.fill()
 
-            if(weapon.color === 'white'){
-                elapsedTime = Date.now() - WM.attackCoolTime // 현재 게이지
-                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / WM.attackDelay)))
-                if(cooldownPercentage === 1) tower.isWPA = true
-            }
-            if(weapon.color === 'blue'){
-                elapsedTime = Date.now() - BM.attackCoolTime
-                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / BM.attackDelay)))
-                if(cooldownPercentage === 1) tower.isBPA = true
-            }
-            if(weapon.color === 'red'){
-                elapsedTime = Date.now() - RM.attackCoolTime
-                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / RM.attackDelay)))
-                if(cooldownPercentage === 1) tower.isRPA = true
-            }
-            if(weapon.color === 'yellowgreen'){
-                elapsedTime = Date.now() - GM.attackCoolTime
-                cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / GM.attackDelay)))
-                if(cooldownPercentage === 1) tower.isGPA = true
+                normalCount++
+
             }
 
-            // 쿨타임 체커
-            statusCtx.beginPath()
-            statusCtx.strokeStyle = weapon.color
-            statusCtx.lineWidth = 5
-            statusCtx.arc(20 + idx * 40, 80, 12, -Math.PI / 2, (2 * Math.PI * cooldownPercentage) - Math.PI / 2)
-            statusCtx.stroke()
-            statusCtx.closePath()
-
-            // 내부 공
-            statusCtx.beginPath()
-            statusCtx.arc(20 + idx * 40, 80, 6, -Math.PI / 2, 2 * Math.PI )
-            statusCtx.fillStyle = weapon.color
-            statusCtx.fill()
         })
     }
 }
@@ -320,11 +344,27 @@ function gameLoop() {
     tower.angle += tower.rotationSpeed
 
     if (Date.now() - lastSpawnTime > spawnInterval) {
-        let createdEnemies = 1
-        Array(createdEnemies).fill(0).forEach(_ => {
+        let createEnemies = 4
+        Array(createEnemies).fill(0).forEach(_ => {
             spawnEnemy()
         })
         lastSpawnTime = Date.now()
+    }
+
+    if (Date.now() - regenTime > regenInterval) {
+        
+        if(tower.currentHp + tower.hpRegen > tower.hp){
+            tower.currentHp = tower.hp
+        }else{
+            tower.currentHp += tower.hpRegen
+        }
+        if(tower.currentMp + tower.mpRegen > tower.mp){
+            tower.currentMp = tower.mp
+        }else{
+            tower.currentMp += tower.mpRegen
+        }
+        
+        regenTime = Date.now()
     }
 
     drawStatus()

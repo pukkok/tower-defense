@@ -1,6 +1,6 @@
 const moreBtnImg = `<img src="./public/more.png" alt="">`
 // 게임 시작
-starter.addEventListener('click', () => {
+startBtn.addEventListener('click', () => {
     gameLoop()
     starter.style.display = 'none'
     tower.currentHp = tower.hp
@@ -9,12 +9,47 @@ starter.addEventListener('click', () => {
     audio.play()
 })
 
+function togglePause() {
+    pause = !pause;
+    if (!pause) {
+        gameLoop() // 일시정지 해제 시 게임 루프 재개
+        enemies.forEach((enemy) => {
+            if (enemy.inCollision) {
+                enemy.damageInterval = setInterval(() => {
+                    tower.currentHp -= enemy.damage
+                    endCase()
+                }, 1000)
+            }
+        })
+        playBtn.classList.add('on')
+        playBtn.classList.remove('off')
+        
+    } else {
+        enemies.forEach((enemy) => {
+            clearInterval(enemy.damageInterval);
+        })
+        playBtn.classList.remove('on')
+        playBtn.classList.add('off')
+    }
+    btnsDisabled()
+}
+
+function btnsDisabled () {
+    const allInfoBtn = info.querySelectorAll('.card:not(.inventory) button')
+    // 퍼즈상태일때 버튼 사용 불가
+    allInfoBtn.forEach(btn => {
+        pause ? btn.disabled = true : btn.disabled = false
+    })
+}
+
+
 // 타워 상태 관리
 function towerStatusChangeHandler () {
     info.innerHTML = ''
     info.append(
         buildTowerCard(), buildInventoryCard()
     )
+    btnsDisabled ()
 }
 
 // 무기 상태 관리
@@ -24,6 +59,7 @@ function weaponStatusChangeHandler () {
         buildMissileCard(WM), buildMissileCard(BM), 
         buildMissileCard(RM), buildMissileCard(GM)
     )
+    btnsDisabled ()
 }
 
 // 탭 버튼
@@ -113,27 +149,20 @@ function buildTowerCard () {
 // 인벤토리 정보
 function buildInventoryCard () {
     const div = document.createElement('div')
-    div.className = 'card'
+    div.className = 'card inventory'
     const title = document.createElement('h3')
     title.innerText = '인벤토리'
     div.append(title)
-    const items = [
-        {color : 'white', type : 'normal', piece : '⚪'},
-        {color : 'blue', type : 'normal', piece: '🔵'},
-        {color : 'yellowgreen', type : 'normal', piece: '🟢'},
-        {color : 'red', type : 'normal', piece: '🔴'},
-        {color : 'yellow', type : 'special', piece: '🟡'}
-    ]
-    const activeItems = [
-        {color : 'yellow', type: 'active', piece : '⚡'}
-    ]
+    
+    
     items.forEach((item)=>{
-        const { color, type, piece } = item
+        const { color, type, piece, isGet } = item
         const btn = document.createElement('button')
         btn.innerText = piece
         btn.addEventListener('click', () => {
             equippedItem(color, type)
         })
+        // btn.disabled = !isGet
         div.append(btn)
     })
 
@@ -229,26 +258,27 @@ function equippedItem(color, type) {
         type
     }
     
-    // 같은 공이 있다면 장착 안됨
+    // 같은 공이 있다면 장착 해제
     const includeBallCheckers = tower.weapons.filter(weapon => {
         return weapon.color === newBall.color
     })
     if(includeBallCheckers.length === 0){
         tower.weapons.push(newBall)
+    }else{
+        console.log('동작')
+        tower.weapons = tower.weapons.filter(weapon => weapon.color !== newBall.color)
     }
 }
 
 // 일시정지
-playBtn.addEventListener('click', gamePause)
+playBtn.addEventListener('click', togglePause)
 
 function gamePause() {
     if(playBtn.classList.contains('on')){
-        playBtn.classList.remove('on')
-        playBtn.classList.add('off')
+        
         pause = true
     }else{
-        playBtn.classList.add('on')
-        playBtn.classList.remove('off')
+        
         pause = false
         gameLoop()
     }
@@ -273,7 +303,7 @@ function musicPlay() {
 window.addEventListener('keydown', (e) => {
     // console.log(e.code)/
     if(e.code === 'Escape'){
-        gamePause()
+        togglePause()
     }
     if(e.code === 'KeyM'){
         musicPlay()

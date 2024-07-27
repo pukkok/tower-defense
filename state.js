@@ -80,6 +80,16 @@ let tower = {
     isChaining: true,
 }
 
+let items = [
+    {color : 'white', type : 'normal', piece : '⚪', isGet: true},
+    {color : 'blue', type : 'normal', piece: '🔵', isGet: false},
+    {color : 'yellowgreen', type : 'normal', piece: '🟢', isGet: false },
+    {color : 'red', type : 'normal', piece: '🔴', isGet: false},
+    {color : 'yellow', type : 'special', piece: '🟡'}
+]
+let activeItems = [
+    {color : 'yellow', type: 'active', piece : '⚡'}
+]
 let WM = { //white missile
     color: 'white',
     damage: 5, // 데미지
@@ -126,6 +136,9 @@ let useChaining = 0
 let enemies = []
 let spawnInterval = 2000
 let lastSpawnTime = Date.now()
+
+let regenInterval = 1000
+let regenTime = Date.now()
 
 let activeSkill = {
     thunder : false

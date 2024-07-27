@@ -125,6 +125,7 @@ button{
     border: solid 1px blueviolet;
     flex: 1;
     padding: 10px;
+    border-radius: 6px;
     font-size: 20px;
     font-weight: bold;
 }
@@ -137,6 +138,7 @@ button{
 
 .status{
     border: solid 1px blueviolet;
+    border-radius: 8px;
 }
 
 .info {
@@ -185,6 +187,10 @@ button{
 
 .info .card p button:disabled img{
     filter: invert(.6);
+}
+
+.info .card.inventory button:disabled{
+    opacity: 0.5;
 }
 
 img{
