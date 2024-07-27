@@ -247,7 +247,7 @@ function repositionBalls() { // 볼의 위치 변경
 }
 
 function equippedItem(color, type) {
-    if(type === 'normal' && tower.sides === tower.weapons.filter(weapon => weapon.type === 'normal').length) return console.log('가득 참')
+    
     const angleStep = (2 * Math.PI) / tower.sides
     const angle = angleStep * (tower.weapons.length % tower.sides)
     const newBall = {
@@ -259,14 +259,15 @@ function equippedItem(color, type) {
     }
     
     // 같은 공이 있다면 장착 해제
-    const includeBallCheckers = tower.weapons.filter(weapon => {
-        return weapon.color === newBall.color
-    })
-    if(includeBallCheckers.length === 0){
-        tower.weapons.push(newBall)
+    const includeBallCheckers = tower.weapons.filter(weapon => weapon.color !== newBall.color)
+    if(includeBallCheckers.length === tower.weapons.length){
+        if(type === 'normal' && tower.sides === tower.weapons.filter(weapon => weapon.type === 'normal').length){
+            console.log('가득 참')
+        }else{
+            tower.weapons.push(newBall)
+        }
     }else{
-        console.log('동작')
-        tower.weapons = tower.weapons.filter(weapon => weapon.color !== newBall.color)
+        tower.weapons = [...includeBallCheckers]
     }
 }
 
