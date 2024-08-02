@@ -114,19 +114,19 @@ function updateEnemies() {
     enemies.forEach((enemy) => {
         // 상태 이상 효과에 따른 적의 색상 변경
         if (enemy.isShock) {
-            enemy.color = 'yellow';
+            enemy.color = 'yellow'
         } else {
-            enemy.color = 'violet';
+            enemy.color = 'violet'
         }
 
         if (enemy.isFrozen) {
             let elapsedTime = Date.now() - enemy.frozenTime;
             if (elapsedTime < tower.frizingTime) {
-                enemy.color = 'blue';
+                enemy.color = 'blue'
             } else {
                 enemy.isFrozen = false;
-                enemy.frozenTime = 0;
-                enemy.color = 'violet';
+                enemy.frozenTime = 0
+                enemy.color = 'violet'
             }
         }
 
@@ -167,9 +167,9 @@ function updateEnemies() {
 
         // 적이 얼어붙지 않았고, 타워와 충돌 범위 밖에 있는 경우 이동
         if (!enemy.isFrozen && distance > tower.size * 2 + enemy.size / 2) {
-            enemy.x += (dx / distance) * enemy.speed;
-            enemy.y += (dy / distance) * enemy.speed;
-            enemy.inCollision = false; // 충돌 상태 초기화
+            enemy.x += (dx / distance) * enemy.speed
+            enemy.y += (dy / distance) * enemy.speed
+            enemy.inCollision = false // 충돌 상태 초기화
         } else {
             // 적이 타워와 충돌 범위 안에 있을 때
             if (!enemy.inCollision) {
@@ -177,31 +177,36 @@ function updateEnemies() {
                 if(!pause){
                     enemy.inCollision = true
                     enemyDamage()
+                    if (tower.currentHp <= 0) {
+                        clearInterval(enemy.damageInterval)
+                        gameOver = true
+                        cancelAnimationFrame(gameLoop)
+                        audio.pause()
+                    }
                     enemy.damageInterval = setInterval(() => {
                         enemyDamage()
+                        if (tower.currentHp <= 0) {
+                            clearInterval(enemy.damageInterval)
+                            gameOver = true
+                            cancelAnimationFrame(gameLoop)
+                            audio.pause()
+                        }
                     }, 1000)
                 }
             }
         }
 
         function enemyDamage(){ // 체력이 0이되면 패배
-
             if(tower.currentHp - enemy.damage < 0) {
                 tower.currentHp = 0
             }else{
                 tower.currentHp -= enemy.damage
             }
-
-            if (tower.currentHp === 0) {
-                clearInterval(enemy.damageInterval)
-                gameOver = true
-                cancelAnimationFrame(gameLoop)
-                audio.pause()
-            }
         }
 
         // 적이 죽거나 충돌 상태를 벗어났을 때 데미지 타이머 중지
         if (enemy.health <= 0 || !enemy.inCollision) {
+            killEnemy(enemy)
             clearInterval(enemy.damageInterval)
             enemy.inCollision = false
         }
@@ -246,13 +251,9 @@ function drawStatus () {
     statusCtx.strokeStyle = 'blue'
     statusCtx.strokeRect(40, 30, statusCanvas.width - 60, barHeight)
 
-    //적 정보
-
-    //적 체력
-    //스테이지
-    //데미지
-    //속도
-
+    //쿨타임
+    statusCtx.strokeStyle = 'white'
+    statusCtx.fillText('쿨타임', 10, mpY + 30)
 
     if(tower.weapons.length>0){
         let normalCount = 0
@@ -285,22 +286,26 @@ function drawStatus () {
                 statusCtx.beginPath()
                 statusCtx.strokeStyle = weapon.color
                 statusCtx.lineWidth = 3
-                statusCtx.arc(20 + normalCount * 30, statusCanvas.height - 20 , 8, -Math.PI / 2, (2 * Math.PI * cooldownPercentage) - Math.PI / 2)
+                // statusCtx.arc(20 + normalCount * 30, statusCanvas.height - 20 , 8, -Math.PI / 2, (2 * Math.PI * cooldownPercentage) - Math.PI / 2)
+                statusCtx.arc(20 + normalCount * 30, mpY + 50 , 8, -Math.PI / 2, (2 * Math.PI * cooldownPercentage) - Math.PI / 2)
                 statusCtx.stroke()
                 statusCtx.closePath()
     
                 // 내부 공
                 statusCtx.beginPath()
-                statusCtx.arc(20 + normalCount * 30, statusCanvas.height - 20, 3, -Math.PI / 2, 2 * Math.PI )
+                statusCtx.arc(20 + normalCount * 30, mpY + 50, 3, -Math.PI / 2, 2 * Math.PI )
                 statusCtx.fillStyle = weapon.color
                 statusCtx.fill()
 
                 normalCount++
-
             }
-
         })
     }
+    //적 정보
+    //적 체력
+    //스테이지
+    //데미지
+    //속도
 }
 
 function stateText (state) {

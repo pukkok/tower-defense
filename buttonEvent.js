@@ -43,7 +43,7 @@ function btnsDisabled () {
 }
 
 
-// 타워 상태 관리
+// 타워 상태 관리 (타워)
 function towerStatusChangeHandler () {
     info.innerHTML = ''
     info.append(
@@ -52,7 +52,7 @@ function towerStatusChangeHandler () {
     // btnsDisabled ()
 }
 
-// 무기 상태 관리
+// 무기 상태 관리 (무기)
 function weaponStatusChangeHandler () { 
     info.innerHTML = ''
     info.append(
@@ -60,6 +60,12 @@ function weaponStatusChangeHandler () {
         buildMissileCard(RM), buildMissileCard(GM)
     )
     // btnsDisabled ()
+}
+
+// 특수 무기 상태 관리 (특수)
+function specialWeaponStatusChangeHandler () {
+    info.innerHTML = ''
+    info.append(buildSpecialWeaponCard('laser'))
 }
 
 // 탭 버튼
@@ -74,8 +80,9 @@ tabBtns.forEach(btn=> {
         })
         btn.classList.add('selected')
 
-        if(btn.dataset.tab === 'weapon') weaponStatusChangeHandler()
         if(btn.dataset.tab === 'tower') towerStatusChangeHandler()
+        if(btn.dataset.tab === 'weapon') weaponStatusChangeHandler()
+        if(btn.dataset.tab === 'special-weapon') specialWeaponStatusChangeHandler()
     })
 })
 
@@ -233,6 +240,16 @@ function buildMissileCard (missile) {
     return div
 }
 
+function buildSpecialWeaponCard () {
+    let info = ''
+
+    if(item.name === 'laser') info = '레이저'
+    const div = document.createElement('div')
+    div.className = 'card'
+    const specialInfo = document.createElement('h3')
+    specialInfo.innerText = info
+
+}
 
 
 function repositionBalls() { // 볼의 위치 변경

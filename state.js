@@ -85,7 +85,7 @@ let items = [
     {color : 'blue', type : 'normal', piece: '🔵', isGet: false},
     {color : 'yellowgreen', type : 'normal', piece: '🟢', isGet: false },
     {color : 'red', type : 'normal', piece: '🔴', isGet: false},
-    {color : 'yellow', type : 'special', piece: '🟡'}
+    {color : 'yellow', type : 'special', piece: '🟡', name: 'laser'}
 ]
 let activeItems = [
     {color : 'yellow', type: 'active', piece : '⚡'}
