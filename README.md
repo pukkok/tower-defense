@@ -15,4 +15,4 @@
 
 <h2>게임 이미지</h2>
 
-<img src="extra/main-game.JPG" alt=""/>
+<img src="public/extra/main-game.JPG" alt=""/>
