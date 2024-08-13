@@ -1,8 +1,4 @@
-"# tower-defense" 
-
-[게임하러가기](https://pukkok.github.io/tower-defense)
-
-# 타워디펜스
+<h2>타워디펜스 <a href="https://pukkok.github.io/tower-defense">[게임하러가기]</a></h1> 
 
 미사일을 장착하고 몰려오는 적을 물리치세요!
 
@@ -17,6 +13,6 @@
 </div>
 
 
-## 게임 이미지
+<h2>게임 이미지</h2>
 
 <img src="extra/main-game.JPG" alt=""/>
