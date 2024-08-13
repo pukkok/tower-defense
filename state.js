@@ -177,6 +177,11 @@ let activeSkill = {
     thunder : false
 }
 
+let createEnemies = 2
+let stage = 1
+let stageGage = 0
+let fullGage = 30
+
 let gameOver = false
 let pause = false
 

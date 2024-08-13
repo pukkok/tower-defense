@@ -87,6 +87,20 @@ function spawnEnemy() {
     
     const dropItems = []
 
+    if (stageGage > fullGage){
+        fullGage = Math.ceil(fullGage * 1.5)
+        stage++
+        createEnemies += stage
+        if(stage % 2){
+            defaultEnemyInfo.minDamage += stage
+            defaultEnemyInfo.minSpeed += stage * 0.5
+        }
+        defaultEnemyInfo.maxDamage += stage
+        defaultEnemyInfo.maxSpeed += stage * 0.5
+        defaultEnemyInfo.health += defaultEnemyInfo.health * 0.1
+        stageGage = 0
+    }
+
     const newEnemy = {
         ...defaultEnemyInfo,
         speed : Math.max(Math.random() * defaultEnemyInfo.maxSpeed, defaultEnemyInfo.minSpeed),
@@ -95,6 +109,8 @@ function spawnEnemy() {
         y: enemyY,
     }
 
+    stageGage++
+    
     enemies.push(newEnemy)
 }
 
@@ -277,11 +293,11 @@ function drawStatus () {
         })
     }
 
-    // ❤️🥾⚔️🏹 적 정보
+    // ❤️🥾⚔️💢🏹 적 정보
     const {minSpeed, maxSpeed, minDamage, maxDamage, maxHealth} = defaultEnemyInfo
     statusCtx.fillStyle = 'white' 
     statusCtx.fillText('적 정보', 10, 150)
-    const enemyInfoText = `❤️ : ${maxHealth} ⚔️ : ${minDamage} ~ ${maxDamage} 🥾 : ${minSpeed} ~ ${maxSpeed} `
+    const enemyInfoText = `❤️ : ${maxHealth} ⚔️ : ${minDamage} ~ ${maxDamage} 🥾 : ${minSpeed} ~ ${maxSpeed} 💢 : ${stage}`
     const enemyInfoMatrics = statusCtx.measureText(enemyInfoText)
     const enemyInfoX = statusCanvas.width / 2 - enemyInfoMatrics.width / 2 + 10
     const enemyInfoY = 20 + 150 + enemyInfoMatrics.actualBoundingBoxAscent / 2
@@ -331,7 +347,6 @@ function gameLoop() {
 
     // enemy 리스폰
     if (Date.now() - lastSpawnTime > spawnInterval) {
-        let createEnemies = 2
         Array(createEnemies).fill(0).forEach(_ => {
             spawnEnemy()
         })

@@ -216,7 +216,7 @@ function buildMissileCard (missile) {
         missile.speed += 1
         weaponStatusChangeHandler()
     })
-    if(missile.speed === 14){
+    if(missile.speed === 10){
         speedBtn.disabled = true
     }
 
