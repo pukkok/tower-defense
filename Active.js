@@ -17,10 +17,9 @@ function drawThunder () {
     activeCtx.arc(thunderPoint.x, thunderPoint.y, thunderPoint.radius, 0, Math.PI * 2)
     activeCtx.stroke()
     
-    const randomValue = () => {
+    const randomValue = () => { // 번개 애니메이션
         let sign = 1 // 부호
         if(Math.random() < .5) sign = -1
-
         return sign * Math.random () * thunderPoint.radius / 2
     }
 
@@ -39,7 +38,7 @@ function checkThunderDamage() {
         const dy = enemy.y - thunderPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)
         if (distance < thunderPoint.radius) {
-            enemy.health -= 20
+            enemy.health -= thunderDamage
             enemy.isShock = true
             killEnemy(enemy)
         } else {
@@ -56,7 +55,8 @@ function drawActive() {
 
 activeCanvas.addEventListener('click', () => {
     if (!isActive) return
-    if (activeThunder && !thunderTimer) {
+    if (activeThunder && !thunderTimer && tower.currentMp > useThunderMana) {
+        tower.currentMp -= useThunderMana
         isActive = false
         thunderPoint = {...activeThunder}
         drawThunder()
@@ -64,7 +64,7 @@ activeCanvas.addEventListener('click', () => {
         thunderTimer = setInterval(() => {
             drawThunder()
             checkThunderDamage()
-        }, 200) // Damage every second
+        }, 200) // 데미지 넣기
 
         setTimeout(() => {
             clearInterval(thunderTimer)
@@ -73,6 +73,6 @@ activeCanvas.addEventListener('click', () => {
             activeThunder = null
             
             activeCtx.clearRect(0, 0, activeCanvas.width, activeCanvas.height)
-        }, 3000) // End after 3 seconds
+        }, thunderDuration)
     }
 })

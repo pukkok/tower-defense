@@ -31,7 +31,7 @@ function togglePause() {
         playBtn.classList.remove('on')
         playBtn.classList.add('off')
     }
-    // btnsDisabled()
+    btnsDisabled()
 }
 
 function btnsDisabled () {
@@ -42,14 +42,12 @@ function btnsDisabled () {
     })
 }
 
-
 // 타워 상태 관리 (타워)
 function towerStatusChangeHandler () {
     info.innerHTML = ''
     info.append(
         buildTowerCard(), buildInventoryCard()
     )
-    // btnsDisabled ()
 }
 
 // 무기 상태 관리 (무기)
@@ -59,13 +57,17 @@ function weaponStatusChangeHandler () {
         buildMissileCard(WM), buildMissileCard(BM), 
         buildMissileCard(RM), buildMissileCard(GM)
     )
-    // btnsDisabled ()
 }
 
 // 특수 무기 상태 관리 (특수)
 function specialWeaponStatusChangeHandler () {
     info.innerHTML = ''
     info.append(buildSpecialWeaponCard('laser'))
+}
+
+function skillStatusChangeHandler () {
+    info.innerHTML = ''
+    info.append(buildSkillCard('thunder'))
 }
 
 // 탭 버튼
@@ -83,6 +85,8 @@ tabBtns.forEach(btn=> {
         if(btn.dataset.tab === 'tower') towerStatusChangeHandler()
         if(btn.dataset.tab === 'weapon') weaponStatusChangeHandler()
         if(btn.dataset.tab === 'special-weapon') specialWeaponStatusChangeHandler()
+        if(btn.dataset.tab === 'skill') skillStatusChangeHandler()
+        pause && btnsDisabled()
     })
 })
 
@@ -189,7 +193,6 @@ function buildInventoryCard () {
 // 무기 정보
 function buildMissileCard (missile) {
     let info = ''
-    
     if (missile.color === 'white') info = '기본(⚪)' 
     if (missile.color === 'blue') info = '빙결(🔵)'
     if (missile.color === 'red') info = '불꽃(🔴)'
@@ -240,17 +243,94 @@ function buildMissileCard (missile) {
     return div
 }
 
-function buildSpecialWeaponCard () {
+// 레이저 타워 특수
+function buildSpecialWeaponCard (item) {
     let info = ''
-
-    if(item.name === 'laser') info = '레이저'
+    if(item === 'laser') info = '레이저(🟡)'
     const div = document.createElement('div')
     div.className = 'card'
     const specialInfo = document.createElement('h3')
     specialInfo.innerText = info
+    div.append(specialInfo)
+    // 체인 개수
+    const chainCountBtn = mappingData('체인 개수', chains, div)
+    chainCountBtn.addEventListener('click', () => {
+        chains += 1
+        specialWeaponStatusChangeHandler()
+    })
+    if(chains === 4){
+        chainCountBtn.disabled = true
+    }
+    // 공격력
+    const damageBtn = mappingData('데미지', chainDamage, div)
+    damageBtn.addEventListener('click', () => {
+        chainDamage += 1
+        specialWeaponStatusChangeHandler()
+    })
+    if(chainDamage === 50){
+        damageBtn.disabled = true
+    }
+    // 마나소모량
+    const manaPerSecBtn = mappingData('초당 MP 소모량', chainUseMana.toFixed(1), div)
+    manaPerSecBtn.addEventListener('click', () => {
+        chainUseMana -= 0.1
+        specialWeaponStatusChangeHandler()
+    })
+    if(chainUseMana === 1){
+        manaPerSecBtn.disabled = true
+    }
 
+    return div
 }
 
+// 스킬 카드
+function buildSkillCard (item) {
+    let info = ''
+    if(item === 'thunder') info = '번개'
+    const div = document.createElement('div')
+    div.className = 'card'
+    const skillInfo = document.createElement('h3')
+    skillInfo.innerText = info
+    div.append(skillInfo)
+    // 지속 시간
+    const chainCountBtn = mappingData('지속 시간', thunderDuration / 1000 + '초', div)
+    chainCountBtn.addEventListener('click', () => {
+        thunderDuration += 100
+        skillStatusChangeHandler()
+    })
+    if(thunderDuration === 5000){
+        chainCountBtn.disabled = true
+    }
+    // 공격력
+    const damageBtn = mappingData('데미지', thunderDamage, div)
+    damageBtn.addEventListener('click', () => {
+        thunderDamage += 1
+        skillStatusChangeHandler()
+    })
+    if(thunderDamage === 50){
+        damageBtn.disabled = true
+    }
+    // 공격범위
+    const rangeBtn = mappingData('공격 범위', thunderRadius, div)
+    rangeBtn.addEventListener('click', () => {
+        thunderRadius += 1
+        skillStatusChangeHandler()
+    })
+    if(thunderRadius === 80){
+        rangeBtn.disabled = true
+    }
+    // 마나소모량
+    const manaPerSecBtn = mappingData('마나 소모량', useThunderMana.toFixed(1), div)
+    manaPerSecBtn.addEventListener('click', () => {
+        useThunderMana -= 0.1
+        skillStatusChangeHandler()
+    })
+    if(useThunderMana === 15){
+        manaPerSecBtn.disabled = true
+    }
+
+    return div
+}
 
 function repositionBalls() { // 볼의 위치 변경
     const angleStep = (2 * Math.PI) / tower.sides
@@ -290,7 +370,6 @@ function equippedItem(color, type) {
 
 // 일시정지
 playBtn.addEventListener('click', togglePause)
-
 function gamePause() {
     if(playBtn.classList.contains('on')){
         
@@ -319,7 +398,6 @@ function musicPlay() {
 
 // 단축키 이벤트 추가
 window.addEventListener('keydown', (e) => {
-    // console.log(e.code)/
     if(e.code === 'Escape'){
         togglePause()
     }
@@ -327,8 +405,18 @@ window.addEventListener('keydown', (e) => {
         musicPlay()
     }
     if(e.code === 'Digit1'){
-        isActive = true
-        mousemoveHandler()
+        if(thunderTimer){
+            return console.log('스킬 사용중')
+        }
+        if(tower.currentMp < useThunderMana){
+            return console.log('마나 부족')
+        }
+        isActive = !isActive
+        if(isActive){
+            mousemoveHandler()
+        }else{
+            activeCtx.clearRect(0, 0, activeCanvas.width, activeCanvas.height)
+        }
     }
 })
 
@@ -337,7 +425,7 @@ function mousemoveHandler (){
     if(isActive){
         activeCanvas.addEventListener('mousemove', (e) => {
             let blank = (window.innerWidth - section.offsetWidth ) / 2
-            activeThunder = {x: e.pageX - blank, y: e.pageY, radius: 40}
+            activeThunder = {x: e.pageX - blank, y: e.pageY, radius: thunderRadius}
             drawActive()
         })
     }

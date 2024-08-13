@@ -9,6 +9,8 @@ const activeCtx = activeCanvas.getContext('2d')
 const statusCanvas = document.getElementById('status-canvas')
 const statusCtx = statusCanvas.getContext('2d')
 
+statusCanvas.height = 200
+
 const audio = document.querySelector('audio')
 const controller = document.querySelector('.controller')
 const playBtn = controller.querySelector('.play')
@@ -130,11 +132,42 @@ let GM = { // green missile
     doubleAttack : 0.00
 }
 
-let chainCharging = 3000
-let useChaining = 0
+let chainDamage = 1
+let chains = 1
+let chainUseMana = 10
+
+let thunderDamage = 20
+let useThunderMana = 30
+let isActive = false
+let activeThunder = null
+let thunderPoint = null
+let thunderTimer = null
+let thunderDuration = 1000
+let thunderRadius = 40
+
+let defaultEnemyInfo = {
+    minSpeed: 2,
+    maxSpeed: 3,
+    size: 20,
+    minDamage: 1,
+    maxDamage: 3,
+    attackCoolTime : 0,
+    attackDelay : 1000,
+    color: 'violet',
+    hpColor : 'red',
+    health: 100,
+    maxHealth: 100,
+    isFrozen: false,
+    frozenTime: 0,
+    isBurn: false,
+    burnTime: 0,
+    isPoison: false,
+    poisonTime: 0,
+    isShock: false
+}
 
 let enemies = []
-let spawnInterval = 2000
+let spawnInterval = 3000
 let lastSpawnTime = Date.now()
 
 let regenInterval = 1000
@@ -147,9 +180,5 @@ let activeSkill = {
 let gameOver = false
 let pause = false
 
-let isActive = false
-let activeThunder = null
-let thunderPoint = null
-let thunderTimer = null
 
 

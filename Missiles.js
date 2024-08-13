@@ -1,5 +1,4 @@
 // 미사일 관리
-
 function drawMissile() {
     // ❄️🔥💣⚡💢
 
@@ -33,6 +32,7 @@ function drawMissile() {
     }
 }
 
+// 어택 쿨타임 돌리기
 function handleCollisions() {
     tower.weapons.forEach(weapon => {
 
@@ -140,10 +140,9 @@ function handleCollisions() {
             }
         }
 
-        if (weapon.color === 'yellow') {
-            if (firstTarget) {
-                chainAttack(firstTarget, 3, weapon, tower.x, tower.y)    
-                useChaining = Date.now()
+        if (weapon.color === 'yellow') { // 체인
+            if (firstTarget && tower.currentMp > 0) {
+                chainAttack(firstTarget, chains, weapon, tower.x, tower.y)    
             }
         }
     })
@@ -230,8 +229,9 @@ function moveBallMissile() {
 
 function chainAttack(enemy, remainingChains, weapon, startX, startY) {
     if (remainingChains <= 0) return
+    tower.currentMp -= chainUseMana / 60
 
-    enemy.health -= remainingChains
+    enemy.health -= remainingChains * chainDamage
     killEnemy(enemy)
 
     ctx.beginPath()
