@@ -1,12 +1,14 @@
 const moreBtnImg = `<img src="./public/more.png" alt="">`
 // 게임 시작
 startBtn.addEventListener('click', () => {
+    gameOver = false
     gameLoop()
     starter.style.display = 'none'
     tower.currentHp = tower.hp
     tower.currentMp = tower.mp
     towerStatusChangeHandler()
     audio.play()
+    console.log('동작')
 })
 
 function togglePause() {
@@ -253,30 +255,30 @@ function buildSpecialWeaponCard (item) {
     specialInfo.innerText = info
     div.append(specialInfo)
     // 체인 개수
-    const chainCountBtn = mappingData('체인 개수', chains, div)
+    const chainCountBtn = mappingData('체인 개수', chain.number, div)
     chainCountBtn.addEventListener('click', () => {
-        chains += 1
+        chain.number += 1
         specialWeaponStatusChangeHandler()
     })
-    if(chains === 4){
+    if(chain.number === 4){
         chainCountBtn.disabled = true
     }
     // 공격력
-    const damageBtn = mappingData('데미지', chainDamage, div)
+    const damageBtn = mappingData('데미지', chain.damage, div)
     damageBtn.addEventListener('click', () => {
-        chainDamage += 1
+        chain.damage += 1
         specialWeaponStatusChangeHandler()
     })
-    if(chainDamage === 50){
+    if(chain.damage === 50){
         damageBtn.disabled = true
     }
     // 마나소모량
-    const manaPerSecBtn = mappingData('초당 MP 소모량', chainUseMana.toFixed(1), div)
+    const manaPerSecBtn = mappingData('초당 MP 소모량', chain.useMana.toFixed(1), div)
     manaPerSecBtn.addEventListener('click', () => {
-        chainUseMana -= 0.1
+        chain.useMana -= 0.1
         specialWeaponStatusChangeHandler()
     })
-    if(chainUseMana === 1){
+    if(chain.useMana === 1){
         manaPerSecBtn.disabled = true
     }
 

@@ -38,8 +38,7 @@ if (windowWidth < windowHeight) {
 }
 
 section.style.maxWidth = canvas.width + controller.offsetWidth + 'px'
-
-let tower = {
+const defaultTower = {
     x: canvas.width / 2,
     y: canvas.height / 2,
     size: 15,
@@ -81,18 +80,17 @@ let tower = {
 
     isChaining: true,
 }
-
-let items = [
+const defaultItems = [
     {color : 'white', type : 'normal', piece : '⚪', isGet: true},
     {color : 'blue', type : 'normal', piece: '🔵', isGet: false},
     {color : 'yellowgreen', type : 'normal', piece: '🟢', isGet: false },
     {color : 'red', type : 'normal', piece: '🔴', isGet: false},
     {color : 'yellow', type : 'special', piece: '🟡', name: 'laser'}
 ]
-let activeItems = [
+const defaultActiveItems = [
     {color : 'yellow', type: 'active', piece : '⚡'}
 ]
-let WM = { //white missile
+const defaultWM = {
     color: 'white',
     damage: 5, // 데미지
     speed: 2, // 투사체 속도
@@ -101,8 +99,7 @@ let WM = { //white missile
     attackDelay : 1000,
     doubleAttack : 0.00 // 2번 공격할 확률
 }
-
-let BM = { // blue missile
+const defaultBM = { // blue missile
     color : 'blue',
     damage : 5,
     speed: 2,
@@ -111,8 +108,7 @@ let BM = { // blue missile
     attackDelay : 2000,
     doubleAttack : 0.00
 }
-
-let RM = { // red missile
+const defaultRM = {
     color: 'red',
     damage : 10,
     speed: 5,
@@ -121,8 +117,7 @@ let RM = { // red missile
     attackDelay : 3000,
     doubleAttack : 0.00
 }
-
-let GM = { // green missile
+const defaultGM = {
     color: 'yellowgreen',
     damage : 2,
     speed: 2,
@@ -131,21 +126,12 @@ let GM = { // green missile
     attackDelay : 2000,
     doubleAttack : 0.00
 }
-
-let chainDamage = 1
-let chains = 1
-let chainUseMana = 10
-
-let thunderDamage = 20
-let useThunderMana = 30
-let isActive = false
-let activeThunder = null
-let thunderPoint = null
-let thunderTimer = null
-let thunderDuration = 1000
-let thunderRadius = 40
-
-let defaultEnemyInfo = {
+const defaultChain = {
+    damage : 1,
+    number : 1,
+    useMana : 10
+}
+const defaultEnemyInfo = {
     minSpeed: 2,
     maxSpeed: 3,
     size: 20,
@@ -165,13 +151,23 @@ let defaultEnemyInfo = {
     poisonTime: 0,
     isShock: false
 }
+const regenInterval = 1000
+let regenTime = Date.now()
+
+let thunderDamage = 20
+let useThunderMana = 30
+let thunderDuration = 1000
+let thunderRadius = 40
+let isActive = false
+let activeThunder = null
+let thunderPoint = null
+let thunderTimer = null
 
 let enemies = []
 let spawnInterval = 3000
 let lastSpawnTime = Date.now()
 
-let regenInterval = 1000
-let regenTime = Date.now()
+
 
 let activeSkill = {
     thunder : false
@@ -185,5 +181,11 @@ let fullGage = 30
 let gameOver = false
 let pause = false
 
-
-
+let tower = {...defaultTower}
+let items = [...defaultItems]
+let activeItems = [...defaultActiveItems]
+let WM = {...defaultWM}
+let BM = {...defaultBM}
+let RM = {...defaultRM}
+let GM = {...defaultGM}
+let chain = {...defaultChain}

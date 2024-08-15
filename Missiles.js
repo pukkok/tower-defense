@@ -142,7 +142,7 @@ function handleCollisions() {
 
         if (weapon.color === 'yellow') { // 체인
             if (firstTarget && tower.currentMp > 0) {
-                chainAttack(firstTarget, chains, weapon, tower.x, tower.y)    
+                chainAttack(firstTarget, chain.number, weapon, tower.x, tower.y)    
             }
         }
     })
@@ -229,9 +229,9 @@ function moveBallMissile() {
 
 function chainAttack(enemy, remainingChains, weapon, startX, startY) {
     if (remainingChains <= 0) return
-    tower.currentMp -= chainUseMana / 60
+    tower.currentMp -= chain.useMana / 60
 
-    enemy.health -= remainingChains * chainDamage
+    enemy.health -= remainingChains * chain.damage
     killEnemy(enemy)
 
     ctx.beginPath()
