@@ -344,38 +344,44 @@ function repositionBalls() { // 볼의 위치 변경
 }
 
 function equippedItem(color, type) {
-    
+    // 장착한 무기인지 확인
+    const colorCheckers = tower.weapons.filter(weapon => weapon.type === 'normal' && weapon.color === color)
+    if(colorCheckers.length > 0){
+        tower.weapons = tower.weapons
+            .filter(weapon => weapon.type === 'normal' &&  weapon.color !== color)
+            .map((weapon, idx) => {
+                const angleStep = (2 * Math.PI) / tower.sides
+                const angle = angleStep * (idx % tower.sides)
+                weapon = {...weapon, angle}
+                return weapon
+            })
+        return
+    }
+
+    // 가득 찼는지 확인
+    const fullCheckers = tower.weapons.filter(weapon => weapon.type === 'normal').length === tower.sides
+    if(fullCheckers && type === 'normal'){
+        return console.log('가득 참')
+    }
+
     const angleStep = (2 * Math.PI) / tower.sides
     const angle = angleStep * (tower.weapons.length % tower.sides)
-    const newBall = {
+    const newWeapon = {
         color: color,
         angle: angle,
         x: (tower.size * 2) * Math.cos(angle),
         y: (tower.size * 2) * Math.sin(angle),
         type
     }
-    
-    // 같은 공이 있다면 장착 해제
-    const includeBallCheckers = tower.weapons.filter(weapon => weapon.color !== newBall.color)
-    if(includeBallCheckers.length === tower.weapons.length){
-        if(type === 'normal' && tower.sides === tower.weapons.filter(weapon => weapon.type === 'normal').length){
-            console.log('가득 참')
-        }else{
-            tower.weapons.push(newBall)
-        }
-    }else{
-        tower.weapons = [...includeBallCheckers]
-    }
+    tower.weapons.push(newWeapon)
 }
 
 // 일시정지
 playBtn.addEventListener('click', togglePause)
 function gamePause() {
     if(playBtn.classList.contains('on')){
-        
         pause = true
     }else{
-        
         pause = false
         gameLoop()
     }
