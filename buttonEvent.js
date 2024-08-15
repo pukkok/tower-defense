@@ -1,15 +1,4 @@
 const moreBtnImg = `<img src="./public/more.png" alt="">`
-// 게임 시작
-startBtn.addEventListener('click', () => {
-    gameOver = false
-    gameLoop()
-    starter.style.display = 'none'
-    tower.currentHp = tower.hp
-    tower.currentMp = tower.mp
-    towerStatusChangeHandler()
-    audio.play()
-    console.log('동작')
-})
 
 function togglePause() {
     pause = !pause;
@@ -438,3 +427,54 @@ function mousemoveHandler (){
         })
     }
 } 
+
+
+// 게임 시작
+startBtn.addEventListener('click', () => {
+    gameOver = false
+    gameLoop()
+    starter.style.display = 'none'
+    tower.currentHp = tower.hp
+    tower.currentMp = tower.mp
+    tabBtns.forEach(btn => {
+        if(btn.classList.contains('selected')){
+            btn.classList.remove('selected')
+        }
+    })
+    tabBtns[0].classList.add('selected')
+    towerStatusChangeHandler()
+    audio.play()
+})
+// 게임 리셋
+function resetGame () {
+    starter.style.display = 'block'
+    startBtn.innerText = '다시'
+
+    tower = JSON.parse(JSON.stringify(defaultTower))
+    tower.weapons = []
+    items = [...defaultItems]
+    activeItems = [...defaultActiveItems]
+    WM = {...defaultWM}
+    BM = {...defaultBM}
+    RM = {...defaultRM}
+    GM = {...defaultGM}
+    chain = {...defaultChain}
+
+    enemies = []
+    spawnInterval = 3000
+    lastSpawnTime = Date.now()
+
+    createEnemies = 2
+    stage = 1
+    stageGage = 0
+    fullGage = 30
+
+    isActive = false
+    thunderDamage = 20
+    useThunderMana = 30
+    thunderDuration = 1000
+    thunderRadius = 40
+    activeThunder = null
+    thunderPoint = null
+    thunderTimer = null
+}

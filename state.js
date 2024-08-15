@@ -48,10 +48,10 @@ const defaultTower = {
     rotationSpeed: 0.01,
     angle: 0,
     currentHp : 0,
-    hp: 100,
+    hp: 50,
     hpRegen: 1,
     currentMp : 0,
-    mp: 100,
+    mp: 50,
     mpRegen: 1,
 
     inventories : [],

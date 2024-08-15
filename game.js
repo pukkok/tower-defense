@@ -374,36 +374,3 @@ function gameLoop() {
     drawStatus()
     requestAnimationFrame(gameLoop)
 }
-
-function resetGame () {
-    starter.style.display = 'block'
-    startBtn.innerText = '다시'
-
-    tower = JSON.parse(JSON.stringify(defaultTower))
-    tower.weapons = []
-    items = [...defaultItems]
-    activeItems = [...defaultActiveItems]
-    WM = {...defaultWM}
-    BM = {...defaultBM}
-    RM = {...defaultRM}
-    GM = {...defaultGM}
-    chain = {...defaultChain}
-
-    enemies = []
-    spawnInterval = 3000
-    lastSpawnTime = Date.now()
-
-    createEnemies = 2
-    stage = 1
-    stageGage = 0
-    fullGage = 30
-
-    isActive = false
-    thunderDamage = 20
-    useThunderMana = 30
-    thunderDuration = 1000
-    thunderRadius = 40
-    activeThunder = null
-    thunderPoint = null
-    thunderTimer = null
-}
