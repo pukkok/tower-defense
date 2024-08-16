@@ -4,14 +4,6 @@ function togglePause() {
     pause = !pause;
     if (!pause) {
         gameLoop() // 일시정지 해제 시 게임 루프 재개
-        enemies.forEach((enemy) => {
-            if (enemy.inCollision) {
-                enemy.damageInterval = setInterval(() => {
-                    tower.currentHp -= enemy.damage
-                    endCase()
-                }, 1000)
-            }
-        })
         playBtn.classList.add('on')
         playBtn.classList.remove('off')
         
@@ -382,7 +374,7 @@ function gamePause() {
 musicBtn.addEventListener('click', musicPlay)
 
 function musicPlay() {
-    if(musicBtn.classList.contains('on')){
+    if(musicBtn.classList.contains('on')){ // 음악 끄기
         musicBtn.classList.add('off')
         musicBtn.classList.remove('on')
         audio.pause()
@@ -428,7 +420,6 @@ function mousemoveHandler (){
     }
 } 
 
-
 // 게임 시작
 startBtn.addEventListener('click', () => {
     gameOver = false
@@ -443,10 +434,14 @@ startBtn.addEventListener('click', () => {
     })
     tabBtns[0].classList.add('selected')
     towerStatusChangeHandler()
-    audio.play()
+    audio.src = './public/bgm/onrepeat.mp3'
+    if(musicBtn.classList.contains('on')){
+        audio.play()
+    }
 })
 // 게임 리셋
 function resetGame () {
+    audio.src = '' //음악 초기화
     starter.style.display = 'block'
     startBtn.innerText = '다시'
 
@@ -477,4 +472,6 @@ function resetGame () {
     activeThunder = null
     thunderPoint = null
     thunderTimer = null
+    
+
 }

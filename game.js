@@ -186,7 +186,6 @@ function updateEnemies() {
                     if (tower.currentHp <= 0) {
                         gameOver = true;
                         cancelAnimationFrame(gameLoop);
-                        audio.pause();
                     }
                     enemy.attackCoolTime = Date.now();  // 쿨타임 초기화
                 }
