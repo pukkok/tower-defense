@@ -134,7 +134,6 @@ const defaultChain = {
 const defaultEnemyInfo = {
     minSpeed: 2,
     maxSpeed: 3,
-    size: 20,
     minDamage: 1,
     maxDamage: 3,
     attackCoolTime : 0,
@@ -163,6 +162,7 @@ let activeThunder = null
 let thunderPoint = null
 let thunderTimer = null
 
+let enemyInfo = {...defaultEnemyInfo}
 let enemies = []
 let spawnInterval = 3000
 let lastSpawnTime = Date.now()

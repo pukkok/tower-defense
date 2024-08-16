@@ -92,19 +92,21 @@ function spawnEnemy() {
         stage++
         createEnemies += stage
         if(stage % 2){
-            defaultEnemyInfo.minDamage += stage
-            defaultEnemyInfo.minSpeed += stage * 0.5
+            enemyInfo.minDamage += stage
+            enemyInfo.minSpeed += stage * 0.5
         }
-        defaultEnemyInfo.maxDamage += stage
-        defaultEnemyInfo.maxSpeed += stage * 0.5
-        defaultEnemyInfo.health += defaultEnemyInfo.health * 0.1
+        enemyInfo.maxDamage += stage
+        enemyInfo.maxSpeed += stage * 0.5
+        enemyInfo.health += enemyInfo.health * 0.1
+        enemyInfo.maxHealth += enemyInfo.maxHealth * 0.1
         stageGage = 0
     }
 
     const newEnemy = {
-        ...defaultEnemyInfo,
-        speed : Math.max(Math.random() * defaultEnemyInfo.maxSpeed, defaultEnemyInfo.minSpeed),
-        damage : Math.max(Math.random() * defaultEnemyInfo.maxDamage, defaultEnemyInfo.minDamage),
+        ...enemyInfo,
+        size: enemyInfo.maxHealth / 5,
+        speed : Math.max(Math.random() * enemyInfo.maxSpeed, enemyInfo.minSpeed),
+        damage : Math.max(Math.random() * enemyInfo.maxDamage, enemyInfo.minDamage),
         x: enemyX,
         y: enemyY,
     }
@@ -140,35 +142,35 @@ function updateEnemies() {
             if (elapsedTime < tower.burningTime) {
                 enemy.color = 'red'
                 if (elapsedTime % 1000 < 50) {
-                    enemy.health -= tower.burnDamage;
-                    killEnemy(enemy);
+                    enemy.health -= tower.burnDamage
+                    killEnemy(enemy)
                 }
             } else {
-                enemy.isBurn = false;
-                enemy.burnTime = 0;
-                enemy.color = 'violet';
+                enemy.isBurn = false
+                enemy.burnTime = 0
+                enemy.color = 'violet'
             }
         }
 
         if (enemy.isPoison) {
-            let elapsedTime = Date.now() - enemy.poisonTime;
+            let elapsedTime = Date.now() - enemy.poisonTime
             if (elapsedTime < tower.poisoningTime) {
-                enemy.hpColor = 'yellowgreen';
+                enemy.hpColor = 'yellowgreen'
                 if (elapsedTime % 1000 < 50) {
-                    enemy.health -= tower.poisonDamage;
-                    killEnemy(enemy);
+                    enemy.health -= tower.poisonDamage
+                    killEnemy(enemy)
                 }
             } else {
-                enemy.isPoison = false;
-                enemy.poisonTime = 0;
-                enemy.hpColor = 'red';
+                enemy.isPoison = false
+                enemy.poisonTime = 0
+                enemy.hpColor = 'red'
             }
         }
 
         // 적과 타워 간 거리 계산
-        let dx = tower.x - enemy.x;
-        let dy = tower.y - enemy.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
+        let dx = tower.x - enemy.x
+        let dy = tower.y - enemy.y
+        let distance = Math.sqrt(dx * dx + dy * dy)
 
         // 적이 얼어붙지 않았고, 타워와 충돌 범위 밖에 있는 경우 이동
         if (!enemy.isFrozen && distance > tower.size * 2 + enemy.size / 2) {
@@ -182,12 +184,12 @@ function updateEnemies() {
                 let cooldownPercentage = Math.max(0, Math.min(1, (elapsedTime / enemy.attackDelay)))
 
                 if (cooldownPercentage === 1) {
-                    enemyDamage();
+                    enemyDamage()
                     if (tower.currentHp <= 0) {
-                        gameOver = true;
-                        cancelAnimationFrame(gameLoop);
+                        gameOver = true
+                        cancelAnimationFrame(gameLoop)
                     }
-                    enemy.attackCoolTime = Date.now();  // 쿨타임 초기화
+                    enemy.attackCoolTime = Date.now()  // 쿨타임 초기화
                 }
                 
             }
@@ -293,7 +295,7 @@ function drawStatus () {
     }
 
     // ❤️🥾⚔️💢🏹 적 정보
-    const {minSpeed, maxSpeed, minDamage, maxDamage, maxHealth} = defaultEnemyInfo
+    const {minSpeed, maxSpeed, minDamage, maxDamage, maxHealth} = enemyInfo
     statusCtx.fillStyle = 'white' 
     statusCtx.fillText('적 정보', 10, 150)
     const enemyInfoText = `❤️ : ${maxHealth} ⚔️ : ${minDamage} ~ ${maxDamage} 🥾 : ${minSpeed} ~ ${maxSpeed} 💢 : ${stage}`

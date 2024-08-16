@@ -328,14 +328,16 @@ function repositionBalls() { // 볼의 위치 변경
 
 function equippedItem(color, type) {
     // 장착한 무기인지 확인
-    const colorCheckers = tower.weapons.filter(weapon => weapon.type === 'normal' && weapon.color === color)
+    const colorCheckers = tower.weapons.filter(weapon => weapon.color === color)
     if(colorCheckers.length > 0){
         tower.weapons = tower.weapons
-            .filter(weapon => weapon.type === 'normal' &&  weapon.color !== color)
+            .filter(weapon => weapon.color !== color)
             .map((weapon, idx) => {
-                const angleStep = (2 * Math.PI) / tower.sides
-                const angle = angleStep * (idx % tower.sides)
-                weapon = {...weapon, angle}
+                if(weapon.type === 'normal'){
+                    const angleStep = (2 * Math.PI) / tower.sides
+                    const angle = angleStep * (idx % tower.sides)
+                    weapon = {...weapon, angle}
+                }
                 return weapon
             })
         return
@@ -454,7 +456,7 @@ function resetGame () {
     RM = {...defaultRM}
     GM = {...defaultGM}
     chain = {...defaultChain}
-
+    enemyInfo = {...defaultEnemyInfo}
     enemies = []
     spawnInterval = 3000
     lastSpawnTime = Date.now()
